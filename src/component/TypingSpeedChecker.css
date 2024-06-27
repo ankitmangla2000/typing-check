@@ -1,0 +1,54 @@
+.container {
+    background-color: #121212;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.sentence {
+    font-size: 20px;
+    margin: 20px 0;
+    background-color: #808080;
+    /* Default grey background */
+    /* padding: 10px; */
+    /* Add padding to simulate text area */
+    border-radius: 5px;
+    display: inline-block;
+    /* Ensures background color covers only text area */
+}
+
+.correct {
+    background-color: #FFDB58;
+    /* Mustard yellow */
+}
+
+.incorrect {
+    background-color: #FF6347;
+    /* Red */
+}
+
+.reset-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.reset-button:hover {
+    background-color: #333;
+}
+
+span {
+    display: inline-block;
+    border-radius: 0;
+    /* Ensures no curved corners for individual characters */
+    padding: 0 2px;
+}
