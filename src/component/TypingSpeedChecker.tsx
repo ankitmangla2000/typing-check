@@ -14,33 +14,52 @@ const TypingSpeedChecker: React.FC = () => {
     const [startTime, setStartTime] = useState<number | null>(null);
     const [wpm, setWpm] = useState<number>(0);
     const [isComplete, setIsComplete] = useState<boolean>(false);
+    const [elapsedTime, setElapsedTime] = useState<number>(0);
+    const [accuracy, setAccuracy] = useState<number>(100);
 
     useEffect(() => {
-        const handleKeyPress = (event: KeyboardEvent) => {
-            if (isComplete) return;
+        let timer: NodeJS.Timeout | null = null;
 
-            let newTypedText = typedText;
+        if (startTime && !isComplete) {
+            timer = setInterval(() => {
+                setElapsedTime((Date.now() - startTime) / 1000);
+            }, 100);
+        }
 
-            if (event.key === "Backspace") {
-                newTypedText = newTypedText.slice(0, -1);
-            } else if (event.key.length === 1) {
-                newTypedText += event.key;
+        return () => {
+            if (timer) {
+                clearInterval(timer);
             }
-
-            if (typedText.length === 0 && newTypedText.length === 1) {
-                setStartTime(Date.now());
-            }
-
-            if (newTypedText.length === sentence.length) {
-                const duration = (Date.now() - (startTime || 0)) / 1000 / 60;
-                const wordsTyped = calculateWordsTyped(sentence, newTypedText);
-                setWpm(Math.round(wordsTyped / duration));
-                setIsComplete(true);
-            }
-
-            setTypedText(newTypedText);
         };
+    }, [startTime, isComplete]);
 
+    const handleKeyPress = (event: KeyboardEvent) => {
+        if (isComplete) return;
+
+        let newTypedText = typedText;
+
+        if (event.key === "Backspace") {
+            newTypedText = newTypedText.slice(0, -1);
+        } else if (event.key.length === 1) {
+            newTypedText += event.key;
+        }
+
+        if (typedText.length === 0 && newTypedText.length === 1) {
+            setStartTime(Date.now());
+        }
+
+        if (newTypedText.length === sentence.length) {
+            const duration = (Date.now() - (startTime || 0)) / 1000 / 60;
+            const wordsTyped = calculateWordsTyped(sentence, newTypedText);
+            setWpm(Math.round(wordsTyped / duration));
+            setIsComplete(true);
+        }
+
+        setTypedText(newTypedText);
+        setAccuracy(calculateAccuracy(sentence, newTypedText));
+    };
+
+    useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
 
         return () => {
@@ -54,6 +73,8 @@ const TypingSpeedChecker: React.FC = () => {
         setStartTime(null);
         setWpm(0);
         setIsComplete(false);
+        setElapsedTime(0);
+        setAccuracy(100);
     };
 
     const calculateWordsTyped = (sentence: string, typedText: string) => {
@@ -68,6 +89,20 @@ const TypingSpeedChecker: React.FC = () => {
         }
 
         return correctWordsCount;
+    };
+
+    const calculateAccuracy = (sentence: string, typedText: string) => {
+        const sentenceWords = sentence.split(' ');
+        const typedWords = typedText.split(' ');
+
+        let correctWordsCount = 0;
+        for (let i = 0; i < sentenceWords.length; i++) {
+            if (typedWords[i] === sentenceWords[i]) {
+                correctWordsCount++;
+            }
+        }
+
+        return Math.round((correctWordsCount / sentenceWords.length) * 100);
     };
 
     const renderHighlightedText = () => {
@@ -94,6 +129,8 @@ const TypingSpeedChecker: React.FC = () => {
             <h1>Let's test your typing skills</h1>
             <div>
                 <strong>Typing speed (in WPM): {wpm}</strong>
+                <strong> | Timer: {elapsedTime.toFixed(1)}s</strong>
+                <strong> | Accuracy: {accuracy}%</strong>
             </div>
             <div className="sentence">
                 {renderHighlightedText()}

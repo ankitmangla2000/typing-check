@@ -45,6 +45,10 @@ h1 {
     background-color: #333;
 }
 
+.reset-button-container {
+    margin-top: 20px;
+}
+
 span {
     display: inline-block;
     border-radius: 0;
