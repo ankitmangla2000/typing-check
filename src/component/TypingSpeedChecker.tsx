@@ -15,7 +15,7 @@ const TypingSpeedChecker: React.FC = () => {
     const [wpm, setWpm] = useState<number>(0);
     const [isComplete, setIsComplete] = useState<boolean>(false);
     const [elapsedTime, setElapsedTime] = useState<number>(0);
-    const [accuracy, setAccuracy] = useState<number>(100);
+    const [accuracy, setAccuracy] = useState<number>(0);
 
     useEffect(() => {
         let timer: NodeJS.Timeout | null = null;
